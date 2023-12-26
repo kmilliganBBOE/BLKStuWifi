@@ -1,0 +1,32 @@
+import requests
+import json
+
+# Replace with your Meraki API key and network ID
+api_key = ""
+network_id = ""
+
+# Set the base URL for the Meraki Dashboard API
+base_url = f""
+
+# Set the headers for the API request
+headers = {
+    "API_Key": API_Key_key,
+    "Content-Type": "application/json",
+}
+
+# Retrieve a list of clients connected to SSID "Name"
+response = requests.get(base_url + "clients", headers=headers)
+
+if response.status_code == 200:
+    clients = response.json()
+    for client in clients:
+        username = client.get("user", "")
+        # Check if the username contains only numbers in the first six characters
+        if username[:6].isdigit():
+            client_mac = client["mac"]
+            # Block the user
+            block_response = requests.post(base_url + f"clients/{client_mac}/block", headers=headers)
+            if block_response.status_code == 200:
+                print(f"Blocked user with MAC address {client_mac}")
+else:
+    print(f"Failed to retrieve clients. Status code: {response.status_code}")
